@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_oes/api/api.dart';
 import 'package:flutter_oes/pages/dialog/loading_dialog.dart';
 import 'package:flutter_oes/pages/main/main_page.dart';
+import 'package:flutter_oes/pages/netsettings/net_settings.dart';
 import 'package:flutter_oes/utils/base_entity.dart';
 import 'package:flutter_oes/utils/net_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,6 +31,23 @@ class _LoginState extends State<LoginPage> {
 
   var _nameController = TextEditingController();
   var _pwdController = TextEditingController();
+
+  //输入框修饰定义
+  var _inputBoxDecoration = BoxDecoration(
+      boxShadow: [
+        //阴影
+        BoxShadow(
+            color: Colors.grey[300],
+            offset: Offset(10.0, 10.0),
+            blurRadius: 4.0)
+      ],
+      color: Colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(4)),
+      border: Border(
+          top: BorderSide(color: Colors.grey[300], width: 1.0),
+          left: BorderSide(color: Colors.grey[300], width: 1.0),
+          right: BorderSide(color: Colors.grey[300], width: 1.0),
+          bottom: BorderSide(color: Colors.grey[300], width: 1.0)));
 
   List<AuthInfoEntity> authInfoList;
   AuthInfoEntity mAuthInfoSelected;
@@ -113,215 +131,161 @@ class _LoginState extends State<LoginPage> {
   Widget createBody() {
     return SingleChildScrollView(
         child: Container(
-          constraints: BoxConstraints(
-              minWidth: double.infinity,
-              minHeight: MediaQuery
-                  .of(context)
-                  .size
-                  .height),
-          decoration: BoxDecoration(
-              image: new DecorationImage(
-                  image: ExactAssetImage("images/bc_login.png"))),
-          child: Stack(alignment: Alignment.center, children: <Widget>[
-            Positioned(
-              top: 50,
-              left: 30,
-              child: Text(
-                "登录",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2),
+      constraints: BoxConstraints(
+          minWidth: double.infinity,
+          minHeight: MediaQuery.of(context).size.height),
+      decoration: BoxDecoration(
+          image: new DecorationImage(
+              image: ExactAssetImage("images/bc_login.png"))),
+      child: Stack(alignment: Alignment.center, children: <Widget>[
+        Positioned(
+          top: 50,
+          left: 30,
+          child: Text(
+            "登录",
+            style: TextStyle(
+                fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+          ),
+        ),
+        Positioned(
+          bottom: 20,
+          child: Row(
+            children: <Widget>[
+              FlatButton(
+                textColor: Colors.lightBlue,
+                onPressed: () {},
+                child: Text("认证平台账号"),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              child: Row(
-                children: <Widget>[
-                  FlatButton(
-                    textColor: Colors.lightBlue,
-                    onPressed: () {},
-                    child: Text("认证平台账号"),
+              Text("|", style: TextStyle(color: Colors.lightBlue)),
+              FlatButton(
+                  textColor: Colors.lightBlue,
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return NetSettingsPage();
+                    }));
+                  },
+                  child: Text("外网不可用")),
+            ],
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                decoration: _inputBoxDecoration,
+                child: TextField(
+                  maxLines: 1,
+                  autofocus: false,
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    hintText: "用户名/院内账号/员工编号",
+                    border: InputBorder.none,
+                    counter: null,
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.blue,
+                    ),
                   ),
-                  Text("|", style: TextStyle(color: Colors.lightBlue)),
-                  FlatButton(
-                      textColor: Colors.lightBlue,
-                      onPressed: () {},
-                      child: Text("外网不可用")),
-                ],
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    margin: EdgeInsets.fromLTRB(40, 0, 40, 0),
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          //阴影
-                          BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(10.0, 10.0),
-                              blurRadius: 4.0)
-                        ],
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: Border(
-                            top: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            left: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            right: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            bottom:
-                            BorderSide(color: Colors.grey[300], width: 1.0))),
-                    child: TextField(
-                      maxLines: 1,
-                      autofocus: false,
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        hintText: "用户名/院内账号/员工编号",
-                        border: InputBorder.none,
-                        counter: null,
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Colors.blue,
-                        ),
+                  textInputAction: TextInputAction.go,
+                )),
+            Container(
+                margin: EdgeInsets.fromLTRB(40, 20, 40, 0),
+                decoration: _inputBoxDecoration,
+                child: TextField(
+                  maxLines: 1,
+                  autofocus: false,
+                  controller: _pwdController,
+                  keyboardType: TextInputType.text,
+                  obscureText: _isShowPassWord,
+                  decoration: InputDecoration(
+                      hintText: "请输入密码",
+                      border: InputBorder.none,
+                      counter: null,
+                      prefixIcon: new Icon(
+                        Icons.lock,
+                        color: Colors.blue,
                       ),
-                      textInputAction: TextInputAction.go,
-                    )),
-                Container(
-                    margin: EdgeInsets.fromLTRB(40, 20, 40, 0),
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          //阴影
-                          BoxShadow(
-                              color: Colors.grey[300],
-                              offset: Offset(10.0, 10.0),
-                              blurRadius: 4.0)
-                        ],
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: Border(
-                            top: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            left: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            right: BorderSide(
-                                color: Colors.grey[300], width: 1.0),
-                            bottom:
-                            BorderSide(color: Colors.grey[300], width: 1.0))),
-                    child: TextField(
-                      maxLines: 1,
-                      autofocus: false,
-                      controller: _pwdController,
-                      keyboardType: TextInputType.text,
-                      obscureText: _isShowPassWord,
-                      decoration: InputDecoration(
-                          hintText: "请输入密码",
-                          border: InputBorder.none,
-                          counter: null,
-                          prefixIcon: new Icon(
-                            Icons.lock,
+                      suffixIcon: new IconButton(
+                        icon: new Icon(
+                          Icons.remove_red_eye,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isShowPassWord = !_isShowPassWord;
+                          });
+                        },
+                      )),
+                  textInputAction: TextInputAction.go,
+                )),
+            Offstage(
+              offstage: _isShowSelectHospital,
+              child: Container(
+                  margin: EdgeInsets.fromLTRB(40, 20, 40, 20),
+                  padding: EdgeInsets.all(12),
+                  decoration: _inputBoxDecoration,
+                  child: GestureDetector(
+                      onTap: showBottomSheet,
+                      child: Row(
+                        children: <Widget>[
+                          new Icon(
+                            Icons.local_hospital,
                             color: Colors.blue,
                           ),
-                          suffixIcon: new IconButton(
-                            icon: new Icon(
-                              Icons.remove_red_eye,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isShowPassWord = !_isShowPassWord;
-                              });
-                            },
-                          )),
-                      textInputAction: TextInputAction.go,
-                    )),
-                Offstage(
-                  offstage: _isShowSelectHospital,
-                  child: Container(
-                      margin: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            //阴影
-                            BoxShadow(
-                                color: Colors.grey[300],
-                                offset: Offset(10.0, 10.0),
-                                blurRadius: 4.0)
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                          border: Border(
-                              top: BorderSide(
-                                  color: Colors.grey[300], width: 1.0),
-                              left: BorderSide(
-                                  color: Colors.grey[300], width: 1.0),
-                              right:
-                              BorderSide(color: Colors.grey[300], width: 1.0),
-                              bottom:
-                              BorderSide(color: Colors.grey[300], width: 1.0))),
-                      child: GestureDetector(
-                          onTap: showBottomSheet,
-                          child: Row(
-                            children: <Widget>[
-                              new Icon(
-                                Icons.local_hospital,
-                                color: Colors.blue,
-                              ),
-                              Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      mAuthInfoSelected == null
-                                          ? "请选择医院"
-                                          : mAuthInfoSelected.name,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )),
-                              new Icon(
-                                Icons.navigate_next,
-                                color: Colors.grey,
-                              )
-                            ],
-                          ))),
-                ),
-                Container(
-                    margin: EdgeInsets.fromLTRB(40, 30, 40, 50),
-                    width: double.infinity,
-                    child: FlatButton(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0)),
-                      color: Colors.blue,
-                      onPressed: () {
-                        //恢复选择医院显示状态的默认值
-                        _isShowSelectHospital = true;
-                        cloudAuthorizedInfo();
-                      },
-                      child: Text(
-                        '登  录',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    )),
-              ],
-            )
-          ]),
-        ));
+                          Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  mAuthInfoSelected == null
+                                      ? "请选择医院"
+                                      : mAuthInfoSelected.name,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )),
+                          new Icon(
+                            Icons.navigate_next,
+                            color: Colors.grey,
+                          )
+                        ],
+                      ))),
+            ),
+            Container(
+                margin: EdgeInsets.fromLTRB(40, 30, 40, 50),
+                width: double.infinity,
+                child: FlatButton(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0)),
+                  color: Colors.blue,
+                  onPressed: () {
+                    //恢复选择医院显示状态的默认值
+                    _isShowSelectHospital = true;
+                    cloudAuthorizedInfo();
+                  },
+                  child: Text(
+                    '登  录',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                )),
+          ],
+        )
+      ]),
+    ));
   }
 
   void checkLoginBtnAble() {
     String name = _nameController.text;
     String pwd = _pwdController.text;
-    if (name == null || name.length == 0 || pwd == null ||
-        pwd.length == 0) {} else {}
+    if (name == null || name.length == 0 || pwd == null || pwd.length == 0) {
+    } else {}
   }
 
   ///失败失败，因为没有认证
@@ -376,12 +340,10 @@ class _LoginState extends State<LoginPage> {
       "loginType": 0
     };
 
-
-
     NetUtils.post(Api.login, params, success: (response) {
       Navigator.pop(context);
-      BaseEntity<LoginEntity> loginEntity = BaseEntity<LoginEntity>.fromJson(
-          json.decode(response));
+      BaseEntity<LoginEntity> loginEntity =
+          BaseEntity<LoginEntity>.fromJson(json.decode(response));
 
       if (loginEntity.status == 0) {
         Fluttertoast.showToast(

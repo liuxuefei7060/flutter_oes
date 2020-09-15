@@ -21,22 +21,28 @@ class NetUtils {
   static init() {
     isInit = true;
 
-    dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (RequestOptions options) {
-
-          print("================== 请求数据 ==========================");
-          print("url = ${options.uri.toString()}");
-          print("headers = ${options.headers}");
-          print("params = ${options.data}");
-          print("params = ${options.contentType}");
-        },
-        onResponse: (Response response) {
-          print("================== 响应数据 ==========================");
-          print(response.data.toString());
-        },
-        onError: (DioError err) {
-          print("================== 响应错误 ==========================");
-        }));
+    dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
+      print("================== 请求数据 ==========================");
+      print("url = ${options.uri.toString()}");
+      print("headers = ${options.headers}");
+      print("params = ${options.data}");
+      print("params = ${options.contentType}");
+    }, onResponse: (Response response) {
+      print("================== 响应数据 ==========================");
+      print(response.statusCode);
+      response.headers.forEach((name, values) {
+        var temp = "";
+        values.forEach((element) {
+          temp += element;
+        });
+        print("$name : $temp");
+      });
+//      print(response.headers);
+      print(response.data.toString());
+    }, onError: (DioError err) {
+      print("================== 响应错误 ==========================");
+    }));
 
     dio.options.contentType =
         ContentType.parse("application/x-www-form-urlencoded").toString();
